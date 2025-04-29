@@ -1,0 +1,2 @@
+Going to build the simple blog api using the spring boot, security, jpa, h2 database, lombok. 
+For testing my spring security skills. I might have done lot of mistakes but if you think it can be better, please let me know. 
