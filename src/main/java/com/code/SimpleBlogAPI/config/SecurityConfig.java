@@ -29,13 +29,18 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
-        // configuring the security
+                // configuring the security
                 .authorizeHttpRequests(auth -> auth
                         // allowing the people to view posts without any authentication
                         .requestMatchers("/blog/posts", "/blog/posts/{id}").permitAll()
 
                         // allowed to register and login the user
                         .requestMatchers("/blog/register", "/blog/login").permitAll()
+
+                        // allowing only the user to create, edit and delete posts
+                        .requestMatchers("/blog/dashboard", "/blog/posts/create", "/blog/posts/edit/{id}",
+                                "/blog/posts/delete/{id}")
+                        .hasRole("USER")
 
                         // Allowing H2 console to access
                         .requestMatchers("/h2-console/**").permitAll()
@@ -48,7 +53,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // created the authentication manager 
+    // created the authentication manager
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
             BCryptPasswordEncoder passwordEncoder) {
@@ -59,7 +64,7 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
-    // 
+    //
     @Bean
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
@@ -68,30 +73,27 @@ public class SecurityConfig {
                 .build();
     }
 
+    // created the user details service for creating in memory users
     @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager() {
-        return new JdbcUserDetailsManager(dataSource());
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(JdbcUserDetailsManager manager) {
+    public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
+        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         // if (!manager.userExists("user")) {
 
-            UserDetails admin = User.builder()
-                    .username("admin")
-                    .password(passwordEncoder.encode("adpass"))
-                    .roles("ADMIN")
-                    .build();
+        UserDetails admin = User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("adpass"))
+                .roles("ADMIN")
+                .build();
 
-            UserDetails user = User.builder()
-                    .username("user")
-                    .password(passwordEncoder.encode("pass"))
-                    .roles("USER")
-                    .build();
-            manager.createUser(admin);
-            manager.createUser(user);
+        UserDetails user = User.builder()
+                .username("user")
+                .password(passwordEncoder.encode("pass"))
+                .roles("USER")
+                .build();
+        manager.createUser(admin);
+        manager.createUser(user);
         // }
         return manager;
     }

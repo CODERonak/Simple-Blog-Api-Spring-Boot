@@ -34,7 +34,7 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles("USER");
 
-                // save's the user
+        // save's the user
         manager.createUser(user.build());
         return "User registered successfully!!!";
     }
