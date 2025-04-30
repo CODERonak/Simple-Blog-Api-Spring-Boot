@@ -24,16 +24,18 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // created the security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
+        // configuring the security
                 .authorizeHttpRequests(auth -> auth
                         // allowing the people to view posts without any authentication
-                        .requestMatchers("/blog/posts", "blog/posts/{id}").permitAll()
+                        .requestMatchers("/blog/posts", "/blog/posts/{id}").permitAll()
 
-                        // allowed to register the user
-                        .requestMatchers("/blog/register").permitAll()
+                        // allowed to register and login the user
+                        .requestMatchers("/blog/register", "/blog/login").permitAll()
 
                         // Allowing H2 console to access
                         .requestMatchers("/h2-console/**").permitAll()
@@ -46,6 +48,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // created the authentication manager 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
             BCryptPasswordEncoder passwordEncoder) {
@@ -56,6 +59,7 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
+    // 
     @Bean
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
@@ -75,19 +79,19 @@ public class SecurityConfig {
 
         // if (!manager.userExists("user")) {
 
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("adpass"))
-                .roles("ADMIN")
-                .build();
+            UserDetails admin = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("adpass"))
+                    .roles("ADMIN")
+                    .build();
 
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("pass"))
-                .roles("USER")
-                .build();
-        manager.createUser(admin);
-        manager.createUser(user);
+            UserDetails user = User.builder()
+                    .username("user")
+                    .password(passwordEncoder.encode("pass"))
+                    .roles("USER")
+                    .build();
+            manager.createUser(admin);
+            manager.createUser(user);
         // }
         return manager;
     }

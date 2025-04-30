@@ -17,5 +17,4 @@ public class Users {
     int id;
     String username;
     String password;
-    String role;
 }
