@@ -16,7 +16,7 @@ public class SecurityConfig {
         http
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/blog/posts").permitAll()
+                        .requestMatchers("/blog/posts", "blog/posts/{id}").permitAll()
                         // Allowing H2 console to access
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated())

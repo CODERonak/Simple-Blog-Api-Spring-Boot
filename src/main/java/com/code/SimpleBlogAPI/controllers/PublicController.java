@@ -3,6 +3,7 @@ package com.code.SimpleBlogAPI.controllers;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class PublicController {
     }
 
     @GetMapping("/posts/{id}")
-    public String viewSinglePosts() {
-        return "single posts";
+    public Post viewSinglePosts(@PathVariable int id) {
+        return postService.viewSinglePost(id);
     }
 }

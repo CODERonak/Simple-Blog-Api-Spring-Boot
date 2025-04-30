@@ -20,4 +20,8 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    public Post viewSinglePost(int id) {
+        return postRepository.findById(id).orElse(null);
+    }
+
 }
